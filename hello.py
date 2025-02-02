@@ -47,10 +47,10 @@ class Users:
         verified = self.admitted(firstname)
         if verified:
             if (data=='mail'):
-                return self.my_dict[data]
+                return verified[data]
             elif (data=='comment'):
-                return self.my_dict[data]
-            else: return self.my_dict
+                return verified[data]
+            else: return verified
         else:
             return 'Invalid student!'
         
@@ -59,23 +59,25 @@ class Users:
         for key, value in Users.database.items():
             dict_keys = ""
             for k, v in value.items():
-                dict_keys += f"{k.title():<30}"
-            print(f"{dict_keys}\n{dash*66}") 
+                dict_keys += f"{k.title():<20}"
+            print(f"{dict_keys}\n{dash*80}") 
             break
         for key, value in Users.database.items():
             dict_values = ""
             for k, v in value.items():
-                dict_values += f"{v:<30}"
-            print(f"{dict_values}\n{dash*66}")  
+                if len(v) > 15:
+                    v = v[:8] + '...'
+                    dict_values += f"{v:<20}"
+                else:
+                    dict_values += f"{v:<20}"
+            print(f"{dict_values}\n{dash*80}")  
     
     
 users = Users()
-users.register('jerry', 'aribidara', 'aribidarajerry@gmail.com', 'm')
-users.register('wonder', 'aribidara', 'aribidarawonder@gmail.com', 'm')
-users.register('comfort', 'aribidara', 'aribidaracomfort@gmail.com', 'f')
-users.register('joshua', 'jacob', 'joshuajacob@gmail.com', 'm')
-users.register('queen', 'elizabeth', 'queenelizabeth@gmail.com', 'f')
-print(users.details('jerry', 'mail'))
+users.register('jerry', 'aribidara', 'aribidarajerry@gmail.com', 'Nice job!')
+users.register('wonder', 'aribidara', 'aribidarawonder@gmail.com', 'You tried but you can work more on the UI. Thanks!')
+users.register('comfort', 'aribidara', 'aribidaracomfort@gmail.com', 'Well done! Keep up the good work!')
+users.register('joshua', 'jacob', 'joshuajacob@gmail.com', 'Wonderful!')
+users.register('queen', 'elizabeth', 'queenelizabeth@gmail.com', 'Hard work really pays!')
+print(users.details('jerry', 'mai'))
 print(users.organize())
-
-
