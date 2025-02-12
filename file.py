@@ -69,7 +69,7 @@ def write(file_name, data):
                 # When I want to write on a new file to show organisation, each data much appear on a new line
                 content += '\n' + data
             f.write(content)
-            print('Done')
+            print(f'Content written to {file_name}!')
         else:
             print('Invalid input!')
             f.write(content)
@@ -99,7 +99,7 @@ def delete(file_name):
             # Convert the remaining data in the list to strings then write to file
             content = '\n'.join(content_lst)
             f.write(content)
-            print('Done')
+            print(f"Content deleted from {file_name}!")
         else:
             print('Does not exist')
             f.write(content)
@@ -113,7 +113,7 @@ def clear_file(file_name):
     get(file_name)
     with open(file_name, 'w', encoding='utf-8') as f:
         f.write('')
-        print('Done')
+        print(f"{file_name} has been successfully cleared!")
 
 
 # --------------------------------------------------------------------------------------------------------------
