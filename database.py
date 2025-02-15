@@ -6,54 +6,44 @@ import file
 
 class Database:
     # class variable
-    database = {}
+    database = []
     population = len(database)
 
 
     def __init__(self, f):
         self.myfile = f
-        self.my_dict = False
+        self.list = False
         # Read the file using the parameter in the class (Database) instance
         self.content = file.get(self.myfile)
 
-    def sort_database_keys(self):
-        obj2 = Database.database
-        Database.database = {}
-        num = 1
-        for r, v in obj2.items():
-            Database.database[num] = v
-            num += 1
-        return Database.database
-
-
     # If something is inside the file, let the database be equal to the file content which is a dictionary
     def update_database(self):
+        # To convert string back to original list or dictionary
         import ast
-        if self.content and Database.database=={}:
-            self.sort_database_keys()
-            # Convert file content to dictionaries
-            content = ast.literal_eval(self.content)
-            Database.database = content
-
+        if self.content and Database.database==[]:
+            # Convert file content from string to list
+            Database.database = ast.literal_eval(self.content)
             # Clear file after updating database with the file content so that when writing back to the file, it doesn't create duplicates
             file.clear_file(self.myfile)
-
-            for c in content:
+            for c in Database.database:
                 Database.population += 1
+            return Database.database
 
 
-    # Automatically adds new object to database dictionary in the class variable
-    def save(self, data, f_name):
-        self.my_dict = data
-        Database.database[Database.population] = data
+    # Automatically adds new object to database list in the class variable
+    def save(self, data):
+        self.list = data
+        Database.database.append(data)
 
     # To verify if a user exists for authentication purposes
     def admitted(self, firstname):
+        self.update_database()
         verify = False
-        for key, value in Database.database.items():
-            if (firstname.lower() == value["firstname"]):
-                verify = True
-                return value
+        for data in Database.database:
+            for d in data:
+                if (firstname.lower() == data[d]):
+                    verify = True
+                    return data
         if verify != True:
             return False
         
@@ -73,7 +63,7 @@ class Database:
                 'mail': mail,
                 'comment': comment
             }
-            self.save(info, self.myfile)
+            self.save(info)
         else:
             print(fname.title() + ' already taken!')
 
@@ -81,9 +71,9 @@ class Database:
     def update(self, firstname, data, value):
         verified = self.admitted(firstname)
         if verified:
-            if data == 'mail' or data == 'comment':
+            try:
                 verified[data] = value
-            else:
+            except:
                 return f"{data} doesn't exist in {firstname} data!"
         else:
             return 'Invalid user!'
@@ -92,11 +82,13 @@ class Database:
     def details(self, firstname, data=False):
         verified = self.admitted(firstname)
         if verified:
-            if (data=='mail'):
-                return verified[data]
-            elif (data=='comment'):
-                return verified[data]
-            else: return verified
+            try:
+                if data:
+                    return verified[data]
+            except Exception as e:
+                return verified
+            else:
+                return verified
         else:
             return 'Invalid user!'
     
@@ -106,13 +98,11 @@ class Database:
         file.clear_file(self.myfile)
         verified = self.admitted(firstname)
         if verified:
-            for key, value in Database.database.items():
-                if (firstname.lower() == value['firstname']):
-                    del Database.database[key]
-                    break
-            # self.sort_database_keys()
+            for data in Database.database:
+                for d in data:
+                    if (firstname.lower() == data[d]):
+                        del Database.database[data]
             self.population -= 1
-            self.sort_database_keys() 
             file.write(self.myfile, str(Database.database))     
             return f"{firstname} successfully deleted!"
         else:
@@ -120,28 +110,24 @@ class Database:
     
     # Save dictionary to file
     def save_to_file(self):
-        verify = input('Are you sure you want to save? Yes(Y) or No(N): ')
-        if Database.database and verify.upper()=='Y':
+        if Database.database:
             file.write(self.myfile, str(Database.database))
-        elif verify.upper()=='N':
-            return 'Continue editing!'
         else:
             return 'No new data registered!'
 
     # All data are organized into a particular table with all their data listed
     def organize(self):
-        self.update_database()
-        
+        self.update_database()     
         dash = "-"
-        for key, value in Database.database.items():
+        for key in Database.database:
             dict_keys = ""
-            for k, v in value.items():
+            for k, v in key.items():
                 dict_keys += f"{k.title():<20}"
             print(f"{dict_keys}\n{dash*80}") 
             break
-        for key, value in Database.database.items():
+        for key in Database.database:
             dict_values = ""
-            for k, v in value.items():
+            for k, v in key.items():
                 if len(v) > 15:
                     v = v[:8] + '...'
                     dict_values += f"{v:<20}"
@@ -151,19 +137,39 @@ class Database:
         
         # Save file again because the file is emptied after updating and dictionary automatically removes (no input)
         file.write(self.myfile, str(Database.database))
+
     
 
 # Creating objects of the Database class
 database = Database('database.txt')
-database.register('jerry', 'aribidara', 'aribidarajerry@gmail.com', 'Nice job!')
-database.register('clinton', 'wonder', 'clintonwonder689@gmail.com', 'You tried but you can work more on the UI. Thanks!')
+
+
 database.register('alice', 'keys', 'alicekeys53@gmail.com', 'Well done! Keep up the good work!')
 database.register('joshua', 'jacob', 'joshuajacob412@gmail.com', 'Wonderful!')
 database.register('queen', 'elizabeth', 'queenelizabeth228@gmail.com', 'Hard work really pays!')
-database.register('queeneth', 'elizabeth', 'queenethelizabeth228@gmail.com', 'Hard work pays!')
+# database.register('queeneth', 'elizabeth', 'queenethelizabeth228@gmail.com', 'Hard work pays!')
 
-# database.delete('jerry')
 print(database.organize())
-print(database.save_to_file())
+# database.save_to_file()
 
 
+print(database.details('alice', 'comment'))
+
+
+
+
+
+
+
+# obj = [{
+#     'name': 'jerry',
+#     'age': 20
+# }]
+
+# obj = str(obj)
+# import ast
+# obj = ast.literal_eval(obj)
+# for o in obj:
+#     for n in o:
+#         print(n)
+#         break

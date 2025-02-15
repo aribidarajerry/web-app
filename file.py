@@ -52,7 +52,7 @@ def write(file_name, data):
 
     # Split each data from a newline (\n) into a list for easy search
     content_lst = content.split('\n')
-    print(content_lst)
+    print(f'File content: {content_lst}')
 
     # Open the file for writing
     with open(file_name, 'w', encoding='utf-8') as f:
@@ -113,7 +113,7 @@ def clear_file(file_name):
     get(file_name)
     with open(file_name, 'w', encoding='utf-8') as f:
         f.write('')
-        print(f"{file_name} has been successfully cleared!")
+        return f"{file_name} has been successfully cleared!"
 
 
 # --------------------------------------------------------------------------------------------------------------
