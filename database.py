@@ -1,10 +1,10 @@
 import file
 
-# Count the registered dictionaries and increase the population to the number
-
+# Count the database list and increase the population to the number
 # Anytime I save to a file, the dictionary should be emptied
 
 class Database:
+
     # class variable
     database = []
     population = len(database)
@@ -13,35 +13,33 @@ class Database:
     def __init__(self, f):
         self.myfile = f
         self.list = False
+
         # Read the file using the parameter in the class (Database) instance
         self.content = file.get(self.myfile)
 
-    # If something is inside the file, let the database be equal to the file content which is a dictionary
+    # If data is saved in the file, append its content to the database class variablel
     def update_database(self):
-        # To convert string back to original list or dictionary
+
+        # To convert the file content from string back to original list (or dictionary)
         import ast
         if self.content and Database.database==[]:
+            
             # Convert file content from string to list
             Database.database = ast.literal_eval(self.content)
+
             # Clear file after updating database with the file content so that when writing back to the file, it doesn't create duplicates
             file.clear_file(self.myfile)
             for c in Database.database:
                 Database.population += 1
             return Database.database
 
-
-    # Automatically adds new object to database list in the class variable
-    def save(self, data):
-        self.list = data
-        Database.database.append(data)
-
-    # To verify if a user exists for authentication purposes
-    def admitted(self, firstname):
+    # To verify if a key exists for authentication purposes
+    def admitted(self, key):
         self.update_database()
         verify = False
         for data in Database.database:
             for d in data:
-                if (firstname.lower() == data[d]):
+                if (key.lower() == data[d]):
                     verify = True
                     return data
         if verify != True:
@@ -51,10 +49,12 @@ class Database:
     # To save registered names to file, use save_to_file() method
     # If what you want to save is less than or more than the parameters listed, just edit the register parameters and the 'info' dictionary
     # Every other thing will be taken care of by the code
+    # The first parameter of this method represents the key for accessing it's data and cannot be duplicated
     def register(self, fname, lname, mail, comment):
         self.update_database()
         verified = self.admitted(fname)
         if not verified:
+
             # Auto increment and saves if user firstname doesn't exist already
             Database.population+=1
             info = {
@@ -67,21 +67,34 @@ class Database:
         else:
             print(fname.title() + ' already taken!')
 
-    # Update user's data
-    def update(self, firstname, data, value):
-        verified = self.admitted(firstname)
+
+    # Saves data registered above to database in class variable and can also be used to save any dictionary but for proper organization of keys, it's better to use the register() method
+    def save(self, data):
+        self.list = data
+        Database.database.append(data)
+
+    # Update saved data
+    def update(self, key, data, value):
+        verified = self.admitted(key)
         if verified:
             try:
-                verified[data] = value
+                verified[data]
             except:
-                return f"{data} doesn't exist in {firstname} data!"
+                return f"{data} doesn't exist in {key} data!"
+            else:
+                verified[data] = value
+                return f'{key} {data} updated!'
+            finally:
+                self.save_to_file()
         else:
+            self.save_to_file()
             return 'Invalid user!'
         
     # To get the details of a particular user, if data is specified, it'll get that specific data rather than all the data
-    def details(self, firstname, data=False):
-        verified = self.admitted(firstname)
+    def details(self, key, data=False):
+        verified = self.admitted(key)
         if verified:
+            self.save_to_file()
             try:
                 if data:
                     return verified[data]
@@ -90,32 +103,34 @@ class Database:
             else:
                 return verified
         else:
+            self.save_to_file()
             return 'Invalid user!'
     
     # Delete data
-    def delete(self, firstname):
+    def delete(self, key):
         self.update_database()
-        file.clear_file(self.myfile)
-        verified = self.admitted(firstname)
+        verified = self.admitted(key)
         if verified:
             for data in Database.database:
                 for d in data:
-                    if (firstname.lower() == data[d]):
-                        del Database.database[data]
+                    if (key.lower() == data[d]):
+                        del Database.database[Database.database.index(data)]
             self.population -= 1
-            file.write(self.myfile, str(Database.database))     
-            return f"{firstname} successfully deleted!"
+            self.save_to_file()
+            return f"{key} successfully deleted!"
         else:
-            return f"{firstname} is invalid!"
+            self.save_to_file()
+            return f"{key} is invalid!"
     
     # Save dictionary to file
     def save_to_file(self):
         if Database.database:
             file.write(self.myfile, str(Database.database))
         else:
+            file.write(self.myfile, str(Database.database))
             return 'No new data registered!'
 
-    # All data are organized into a particular table with all their data listed
+    # To display saved data
     def organize(self):
         self.update_database()     
         dash = "-"
@@ -134,42 +149,35 @@ class Database:
                 else:
                     dict_values += f"{v:<20}"
             print(f"{dict_values}\n{dash*80}")
-        
-        # Save file again because the file is emptied after updating and dictionary automatically removes (no input)
-        file.write(self.myfile, str(Database.database))
+            # Save file again because the file is emptied after updating and dictionary automatically removes (no input)
+            self.save_to_file()
 
     
 
-# Creating objects of the Database class
+# Creating objects of the Database class with the choiced filename
 database = Database('database.txt')
 
 
-database.register('alice', 'keys', 'alicekeys53@gmail.com', 'Well done! Keep up the good work!')
-database.register('joshua', 'jacob', 'joshuajacob412@gmail.com', 'Wonderful!')
-database.register('queen', 'elizabeth', 'queenelizabeth228@gmail.com', 'Hard work really pays!')
-# database.register('queeneth', 'elizabeth', 'queenethelizabeth228@gmail.com', 'Hard work pays!')
+# This is a sample usage of the register method for registering visitors for a website
+# database.register('jerry', 'aribidara', 'aribidarajerry@gmail.com', 'Well done! Keep up the good work!')
 
-print(database.organize())
+# After registering, you must store user to file using the save_to_file()...Very important!
 # database.save_to_file()
 
+# print(database.delete('jerry'))
 
-print(database.details('alice', 'comment'))
+# You can view the file and verify if it's written to it using the 'file' module
+print(database.organize())
 
+"""
+register ----
+update ----
+details ----
+delete ----
+save_to_file
+organize
+"""
 
-
-
-
-
-
-# obj = [{
-#     'name': 'jerry',
-#     'age': 20
-# }]
-
-# obj = str(obj)
-# import ast
-# obj = ast.literal_eval(obj)
-# for o in obj:
-#     for n in o:
-#         print(n)
-#         break
+# obj = {
+#     'name': 'jerry'
+# }

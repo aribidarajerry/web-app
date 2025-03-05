@@ -2,6 +2,9 @@
 # Your simple text file editor app
 
 
+
+
+# Convert a str_dict like JSON back to a dictionary... Also works for lists
 def convert_str_to_dict(obj):
     import ast
     new_obj = ast.literal_eval(obj)
@@ -13,6 +16,7 @@ def convert_str_to_dict(obj):
 
 # This function creates a new file, reads and displays the content(s) of a file
 def get(file_name):
+
     # An empty variable to store file content
     content = ''
 
@@ -37,6 +41,7 @@ def exist(text, lst):
     # Loop over each data to check if any one already exist
     for l in lst:
         if text==l:
+
             # Return the index of the the text in the list
             return lst.index(text)
 
@@ -52,26 +57,27 @@ def write(file_name, data):
 
     # Split each data from a newline (\n) into a list for easy search
     content_lst = content.split('\n')
-    print(f'File content: {content_lst}')
 
     # Open the file for writing
     with open(file_name, 'w', encoding='utf-8') as f:
 
         # Check if the text exist already to avoid duplication
         if exist(data, content_lst) != None:
-            print('Already exist!')
+            return 'Already exist!'
             f.write(content)
         elif data:
+
             # If the content is already empty, just make it the text no need for concatenating to prevent loop holes
             if content == '':
                 content = data
             else:
+
                 # When I want to write on a new file to show organisation, each data much appear on a new line
                 content += '\n' + data
             f.write(content)
-            print(f'Content written to {file_name}!')
+            return f'Content written to {file_name}!'
         else:
-            print('Invalid input!')
+            return 'Invalid input!'
             f.write(content)
 
 
@@ -85,7 +91,6 @@ def delete(file_name):
 
     # Split each data from a newline (\n) into a list for easy search
     content_lst = content.split('\n')
-    print(content_lst)
     with open(file_name, 'w', encoding='utf-8') as f:
         text=input('Enter text: ')
 
@@ -99,9 +104,9 @@ def delete(file_name):
             # Convert the remaining data in the list to strings then write to file
             content = '\n'.join(content_lst)
             f.write(content)
-            print(f"Content deleted from {file_name}!")
+            return f"Content deleted from {file_name}!"
         else:
-            print('Does not exist')
+            return 'Does not exist'
             f.write(content)
 
 
@@ -109,6 +114,7 @@ def delete(file_name):
 
 
 def clear_file(file_name):
+
     # Get file to prevent FileNotFoundError when writing to file
     get(file_name)
     with open(file_name, 'w', encoding='utf-8') as f:
@@ -117,23 +123,4 @@ def clear_file(file_name):
 
 
 # --------------------------------------------------------------------------------------------------------------
-
-
-
-
-# file = 'password_manager.txt'
-# instruction = input('What do you want to do? (Read(r), write(w), delete(d)): ')
-# if instruction == 'r':
-#     print(get(file))
-# elif instruction == 'w':
-#     write(file)
-# else:
-#     delete(file)
-
-
-obj = {
-    'name': 'jerry',
-    'age': 20
-}
-
 
