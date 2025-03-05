@@ -157,7 +157,6 @@ class Database:
 # Creating objects of the Database class with the choiced filename
 database = Database('database.txt')
 
-
 # This is a sample usage of the register method for registering visitors for a website
 # database.register('jerry', 'aribidara', 'aribidarajerry@gmail.com', 'Well done! Keep up the good work!')
 
@@ -167,17 +166,5 @@ database = Database('database.txt')
 # print(database.delete('jerry'))
 
 # You can view the file and verify if it's written to it using the 'file' module
-print(database.organize())
+# print(database.organize())
 
-"""
-register ----
-update ----
-details ----
-delete ----
-save_to_file
-organize
-"""
-
-# obj = {
-#     'name': 'jerry'
-# }
